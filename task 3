@@ -1,1 +1,44 @@
+function asyncMapAbort(arr, asyncCb, signal, finalCb) {
+    if (signal.aborted) return finalCb(new Error("Aborted"));
+
+    let results = [];
+    let completed = 0;
+    let hasErr = false;
+
+    arr.forEach((item, index) => {
+        if (signal.aborted) return;
+        asyncCb(item, (err, result) => {
+            if (hasErr || signal.aborted) return;
+            if (err) {
+                hasErr = true;
+                return finalCb(err);
+            }
+            results[index] = result;
+            completed++;
+            if (completed === arr.length) {
+                finalCb(null, results);
+            }
+        });
+    });
+
+    signal.addEventListener("abort", () => {
+        finalCb(new Error("Aborted"));
+    });
+}
+
+// usage example
+const controller = new AbortController();
+asyncMapAbort(
+    [1, 2, 3],
+    (data, cb) => {
+        setTimeout(() => cb(null, data * 2), 1000);
+    },
+    controller.signal,
+    (err, result) => {
+        if (err) console.error(err.message); // Aborted
+        else console.log(result);
+    }
+);
+
+setTimeout(() => controller.abort(), 500);
 
