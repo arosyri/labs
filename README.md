@@ -117,10 +117,10 @@ Integrates `AbortController` for canceling asynchronous operations during execut
 ### **Main tasks:**
 - Adds support for canceling tasks through an `AbortController`.
 
-**Example Usage:**
+**Usage Example:**
 ```javascript
 const controller = new AbortController();
-asyncMapWithAbort(
+asyncMapAbort(
   [1, 2, 3],
   (data, cb) => {
     setTimeout(() => cb(null, data * 2), 1000);
@@ -134,6 +134,64 @@ asyncMapWithAbort(
 
 // Abort the operation
 setTimeout(() => controller.abort(), 500);
+```
+
+---
+## **Task 4**
+Showcases the use of `Readable` streams or async generators for processing large datasets that cannot fit in memory.
+
+### **Main tasks:**
+- Implements an async generator and Readable streams for processing large datasets.
+
+**Using Readable Streams:**
+```javascript
+const fs = require("fs");
+const readline = require("readline");
+
+
+const processFile = async (filePath) => {
+    const fileStream = fs.createReadStream(filePath); // create a stream for reading the file
+
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity, // recognize all instances of CRLF (\r\n) as a single newline
+    });
+
+    console.log("Processing large file:");
+
+    for await (const line of rl) {
+        console.log(`Line: ${line}`);
+    }
+
+    console.log("File processing complete.");
+};
+
+processFile("largeFile.txt").catch((err) => console.error("Error:", err));
+```
+
+**Using Async Generators:**
+```javascript
+async function* fetchDataset(data) {
+    for (const item of data) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        yield item * 2;
+    }
+}
+
+const processDataset = async () => {
+    const largeDataset = Array.from({ length: 1000 }, (_, i) => i + 1); // simulate a large dataset
+
+    console.log("Processing large dataset:");
+
+    for await (const value of fetchDataset(largeDataset)) {
+        console.log(`Processed value: ${value}`);
+    }
+
+    console.log("Dataset processing complete.");
+};
+// process the large dataset
+processDataset().catch((err) => console.error("Error:", err));
+
 ```
 
 ---
