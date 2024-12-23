@@ -1,1 +1,21 @@
+const { Observable } = require("rxjs");
+
+const messageObservable = new Observable((subscriber) => {
+    subscriber.next("Message 1");
+    setTimeout(() => subscriber.next("Message 2"), 1000);
+    setTimeout(() => subscriber.error(new Error("Something went wrong")), 2000);
+    setTimeout(() => subscriber.next("Message 3"), 3000);
+    setTimeout(() => subscriber.complete(), 4000);
+});
+
+const subscription = messageObservable.subscribe({
+    next: (data) => console.log(`Received: ${data}`),
+    error: (err) => console.error(`Error: ${err.message}`),
+    complete: () => console.log("Stream complete"),
+});
+
+setTimeout(() => {
+    subscription.unsubscribe();
+    console.log("Unsubscribed from the observable");
+}, 3500);
 
