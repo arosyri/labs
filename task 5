@@ -1,3 +1,12 @@
+const { EventEmitter } = require("events");
+
+const emitter = new EventEmitter();
+
+emitter.on("data", (data) => console.log(`Received: ${data}`));
+
+setTimeout(() => emitter.emit("data", "Message 1"), 1000);
+setTimeout(() => emitter.emit("data", "Message 2"), 2000);
+
 const { Observable } = require("rxjs");
 
 const messageObservable = new Observable((subscriber) => {
