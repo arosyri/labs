@@ -1,1 +1,15 @@
+async function* asyncGenerator(data) {
+  for (let item of data) {
+    await new Promise((resolve) => setTimeout(resolve, 100)); 
+    yield item * 2;
+  }
+}
+
+// usage example
+(async () => {
+  const data = [1, 2, 3, 4, 5];
+  for await (let value of asyncGenerator(data)) {
+    console.log(value); 
+  }
+})();
 
