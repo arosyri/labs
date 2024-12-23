@@ -127,12 +127,12 @@ asyncMapAbort(
   },
   controller.signal,
   (err, result) => {
-    if (err) console.error(err.message); // Aborted
+    if (err) console.error(err.message); // aborted
     else console.log(result);
   }
 );
 
-// Abort the operation
+// abort the operation
 setTimeout(() => controller.abort(), 500);
 ```
 
@@ -192,6 +192,52 @@ const processDataset = async () => {
 // process the large dataset
 processDataset().catch((err) => console.error("Error:", err));
 
+```
+
+---
+## **Task 5**
+Uses `EventEmitter` for reactive message-based communication between entities.
+
+### **Main tasks:**
+- Demonstrates reactive programming with `EventEmitter` for message-based communication.
+- Supports dynamic subscriptions and event handling.
+
+**Example Usage with EventEmitter:**
+```javascript
+const { EventEmitter } = require("events");
+
+const emitter = new EventEmitter();
+
+emitter.on("data", (data) => console.log(`Received: ${data}`));
+
+setTimeout(() => emitter.emit("data", "Message 1"), 1000);
+setTimeout(() => emitter.emit("data", "Message 2"), 2000);
+
+```
+
+**Usage Example with RxJS:**
+```javascript
+const { Observable } = require("rxjs");
+
+// create an observable
+const messageObservable = new Observable((subscriber) => {
+    subscriber.next("Message 1");
+    setTimeout(() => subscriber.next("Message 2"), 1000);
+    setTimeout(() => subscriber.error(new Error("Something went wrong")), 2000);
+    setTimeout(() => subscriber.next("Message 3"), 3000);
+    setTimeout(() => subscriber.complete(), 4000);
+});
+
+const subscription = messageObservable.subscribe({
+    next: (data) => console.log(`Received: ${data}`),
+    error: (err) => console.error(`Error: ${err.message}`),
+    complete: () => console.log("Stream complete"),
+});
+
+setTimeout(() => {
+    subscription.unsubscribe();
+    console.log("Unsubscribed from the observable");
+}, 3500);
 ```
 
 ---
