@@ -111,3 +111,30 @@ promiseMap([1, 2, 3, 4, 5], fetchData, 3)
 ```
 
 ---
+## **Task 3**
+Integrates `AbortController` for canceling asynchronous operations during execution.
+
+### **Main tasks:**
+- Adds support for canceling tasks through an `AbortController`.
+
+**Example Usage:**
+```javascript
+const controller = new AbortController();
+asyncMapWithAbort(
+  [1, 2, 3],
+  (data, cb) => {
+    setTimeout(() => cb(null, data * 2), 1000);
+  },
+  controller.signal,
+  (err, result) => {
+    if (err) console.error(err.message); // Aborted
+    else console.log(result);
+  }
+);
+
+// Abort the operation
+setTimeout(() => controller.abort(), 500);
+```
+
+---
+
