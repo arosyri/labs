@@ -1,1 +1,79 @@
+// 1
+
+function asyncMap(arr, asyncCb, finalCb) {
+    let results = [];
+    let completed = 0;
+    let hasErr = false;
+
+    arr.forEach((item, index) => {
+        asyncCb(item, (err, result) => {
+            if (hasErr) return;
+            if (err) {
+                hasErr = true;
+                return finalCb(err);
+            }
+            results[index] = result;
+            completed++;
+            if (completed === arr.length) {
+                finalCb(null, results);
+            }
+        });
+    });
+}
+
+// usage example
+asyncMap(
+    [1, 2, 3],
+    (data, cb) => {
+        setTimeout(() => {
+            cb(null, data * 2);
+        }, 1000);
+    },
+    (err, result) => {
+        console.log(err, result); // null [2, 4, 6]
+    }
+);
+// 2 Add support for debounce
+
+function asyncMap(arr, asyncCb, finalCb, debounceTime = 100) {
+    let results = [];
+    let completed = 0;
+    let hasErr = false;
+
+    arr.forEach((item, index) => {
+        const startTime = Date.now();
+        asyncCb(item, (err, result) => {
+            const executionTime = Date.now() - startTime;
+            const delay = Math.max(0, debounceTime - executionTime);
+
+            if (hasErr) return;
+            if (err) {
+                hasErr = true;
+                return finalCb(err);
+            }
+            setTimeout(() => {
+                results[index] = result;
+                completed++;
+                if (completed === arr.length) {
+                    finalCb(null, results);
+                }
+            }, delay);
+        });
+    });
+}
+
+// usage example
+asyncMap(
+    [1, 2, 3],
+    (data, cb) => {
+        setTimeout(() => {
+            cb(null, data * 2);
+        }, 1000);
+    },
+    (err, result) => {
+        console.log(err, result); // null [2, 4, 6]
+    }
+);
+
+
 
