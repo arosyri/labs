@@ -1,15 +1,43 @@
-async function* asyncGenerator(data) {
-  for (let item of data) {
-    await new Promise((resolve) => setTimeout(resolve, 100)); 
-    yield item * 2;
-  }
+const fs = require("fs");
+const readline = require("readline");
+
+
+const processFile = async (filePath) => {
+    const fileStream = fs.createReadStream(filePath);
+
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity,
+    });
+
+    console.log("Processing large file:");
+
+    for await (const line of rl) {
+        console.log(`Line: ${line}`);
+    }
+
+    console.log("File processing complete.");
+};
+
+processFile("largeFile.txt").catch((err) => console.error("Error:", err));
+async function* fetchDataset(data) {
+    for (const item of data) {
+        await new Promise((resolve) => setTimeout(resolve, 100)); 
+        yield item * 2;
+    }
 }
 
-// usage example
-(async () => {
-  const data = [1, 2, 3, 4, 5];
-  for await (let value of asyncGenerator(data)) {
-    console.log(value); 
-  }
-})();
+const processDataset = async () => {
+    const largeDataset = Array.from({ length: 1000 }, (_, i) => i + 1); 
+
+    console.log("Processing large dataset:");
+
+    for await (const value of fetchDataset(largeDataset)) {
+        console.log(`Processed value: ${value}`);
+    }
+
+    console.log("Dataset processing complete.");
+};
+
+processDataset().catch((err) => console.error("Error:", err));
 
